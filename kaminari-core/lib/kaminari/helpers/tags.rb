@@ -20,10 +20,11 @@ module Kaminari
         @template, @theme, @views_prefix, @options = template, theme, views_prefix, options
         @param_name = param_name || Kaminari.config.param_name
         @params = template.params
+        @excepted_params = excepted_params
         # @params in Rails 5 no longer inherits from Hash
         @params = @params.to_unsafe_h if @params.respond_to?(:to_unsafe_h)
         @params = @params.with_indifferent_access
-        @params.except! *PARAM_KEY_BLACKLIST.merge(excepted_params)
+        @params.except! *param_key_blacklist
         @params.merge! params
       end
 
@@ -66,6 +67,10 @@ module Kaminari
          @theme,
          self.class.name.demodulize.underscore
         ].compact.join("/")
+      end
+
+      def param_key_blacklist
+        PARAM_KEY_BLACKLIST + @excepted_params
       end
     end
 
